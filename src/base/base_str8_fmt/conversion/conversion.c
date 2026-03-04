@@ -1,0 +1,8 @@
+#include "padding.c"
+#include "handle_char.c"
+#include "handle_hex.c"
+#include "handle_int.c"
+#include "handle_percent_literal.c"
+#include "handle_ptr.c"
+#include "handle_string8.c"
+#include "handle_uint.c"
