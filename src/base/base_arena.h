@@ -18,7 +18,8 @@ struct Temp
     u64 pos;
 };
 
-Arena *arena_create(u64 size);
+Arena *arena_alloc(u64 size);
+void arena_init(Arena *arena, void *backing_buffer, u64 backing_buffer_len);
 void *arena_push(Arena *arena, u64 size);
 void *arena_push_packed(Arena *arena, u64 size);
 u64 arena_pos(Arena *arena);

@@ -2,8 +2,8 @@
 #define BASE_INC_H
 
 #include "base_core.h"
-#include "base_string.h"
 #include "base_arena.h"
-#include "base_str8_fmt/str8_fmt_inc.h"
+#include "base_string.h"
+#include "base_str8fmt_builder/str8fmt_builder_inc.h"
 
 #endif

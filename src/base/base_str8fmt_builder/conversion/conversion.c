@@ -5,4 +5,5 @@
 #include "handle_percent_literal.c"
 #include "handle_ptr.c"
 #include "handle_string8.c"
-#include "handle_uint.c"
+#include "handle_u64.c"
+#include "handle_float.c"

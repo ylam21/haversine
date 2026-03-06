@@ -1,4 +1,4 @@
-Arena *arena_create(u64 size)
+Arena *arena_alloc(u64 size)
 {
     Arena *arena;
     arena = malloc(sizeof(Arena));
@@ -17,6 +17,13 @@ Arena *arena_create(u64 size)
     arena->cap = size;
     arena->pos = 0;
     return arena;
+}
+
+void arena_init(Arena *arena, void *backing_buffer, u64 backing_buffer_len)
+{
+    arena->buffer = backing_buffer;
+    arena->cap = backing_buffer_len;
+    arena->pos = 0;
 }
 
 u64 arena_pos(Arena *arena)

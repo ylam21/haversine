@@ -2,15 +2,9 @@
 
 t_fmt_opt parse_options(String8 fmt, u64 *pos)
 {
-    t_fmt_opt opt = { .padding_char = CHAR_SPACE, .width = 0, .left_align = 0 , .is_conditional = 0};
+    t_fmt_opt opt = { .padding_char = CHAR_SPACE, .width = 0, .left_align = 0, .precision = 0};
     u8 *f = fmt.str;
     u64 p = *pos;
-
-    if (f[p] == '?')
-    {
-        opt.is_conditional = 1;
-        p += 1;
-    }
 
     while (p < fmt.size && (f[p] == '-' || f [p]== '0'))
     {
@@ -31,19 +25,26 @@ t_fmt_opt parse_options(String8 fmt, u64 *pos)
         p += 1;
     }
 
+    if (f[p] == '.')
+    {
+        p += 1;
+        while (p < fmt.size && f[p] >= '0' && f[p] <= '9')
+        {
+            opt.precision = ((opt.precision << 3) + (opt.precision << 1) + f[p] - '0');
+            p += 1;
+        }
+    }
+
     *pos = p;
 
     return opt;
 }
 
-String8 str8_fmt(Arena *arena, String8 fmt, ...)
+String8 str8fmt_builder(Arena *arena, String8 fmt, va_list args) 
 { 
     u8 *start_ptr = (u8 *)arena->buffer + arena->pos;
-    // NOTE:  Everything allocated onto the arena from this point
+    // NOTE:  Everything allocated onto the arena from this point up to the string size
     //        is going to be included in the returned string!
-
-    va_list args;
-    va_start(args, fmt);
 
     u64 pos = 0;
     while (pos < fmt.size)
@@ -56,7 +57,7 @@ String8 str8_fmt(Arena *arena, String8 fmt, ...)
             fmt_handler_t handler = specifier_table[fmt.str[pos]];
             if (handler)
             {
-                handler(arena, args, opt);
+                handler(arena, args, &opt);
             }
             else if (pos < fmt.size)
             {
@@ -79,7 +80,6 @@ String8 str8_fmt(Arena *arena, String8 fmt, ...)
         }
         pos++;
     }
-    va_end(args);
 
     u64 size = (u64)((u8 *)arena->buffer + arena->pos  - start_ptr);
 

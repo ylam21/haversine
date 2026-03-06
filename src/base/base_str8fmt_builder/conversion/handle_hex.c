@@ -1,4 +1,4 @@
-void handle_hex(Arena *arena, va_list args, t_fmt_opt opt, u8 table[16])
+void handle_hex(Arena *arena, va_list args, t_fmt_opt *opt, u8 table[16])
 {
     u32 val = va_arg(args, u32);
 
@@ -33,12 +33,12 @@ void handle_hex(Arena *arena, va_list args, t_fmt_opt opt, u8 table[16])
     apply_padding(arena, s, opt);
 }
 
-void handle_upx(Arena *arena, va_list args, t_fmt_opt opt)
+void handle_upx(Arena *arena, va_list args, t_fmt_opt *opt)
 {
     handle_hex(arena, args, opt, (u8*)"0123456789ABCDEF");
 }   
 
-void handle_x(Arena *arena, va_list args, t_fmt_opt opt)
+void handle_x(Arena *arena, va_list args, t_fmt_opt *opt)
 {
     handle_hex(arena, args, opt, (u8*)"0123456789abcdef");
 }

@@ -73,9 +73,10 @@ f64 rand_in_range(ranctx *ctx, f64 min, f64 max)
 
 void generate_and_write_data(s32 fd, u64 seed, u64 n_pairs, u8 flag)
 {
-	Arena *arena = arena_create(KB(1));
-	if (!arena) return;
-
+	Arena arena = {0};
+	u8 buf[KB(1)];
+	arena_init(&arena, buf, KB(1));
+	
 	ranctx ctx = {0};
 	raninit(&ctx, seed);
 	
@@ -86,9 +87,9 @@ void generate_and_write_data(s32 fd, u64 seed, u64 n_pairs, u8 flag)
 	f64 haversine_distance = 0;
 	u64 n = 0;
 	String8 sep = {0};
-	String8 line = {0};
-	String8 json_header = str8_fmt(arena, STR8_LIT("{\"pairs\":[\n"));
-	write(fd, json_header.str, json_header.size);
+	s32 written = str8fmt_write(fd, &arena, STR8_LIT("{\"pairs\":[\n"));
+	if (written == -1) return;
+
 	if (flag & typeUniform)
 	{
 		while (n < n_pairs)
@@ -99,9 +100,9 @@ void generate_and_write_data(s32 fd, u64 seed, u64 n_pairs, u8 flag)
 			y1 = rand_in_range(&ctx, -MAX_ALLOWED_Y, MAX_ALLOWED_Y);
 			
 			sep = n == (n_pairs - 1) ? STR8_LIT("\n") : STR8_LIT(",\n");
-			line = str8_fmt(arena, STR8_LIT("    {\"x0\":%.16f, \"y0\":%.16f, \"x1\":%.16f, \"y1\":%.16f}%s"), x0, y0, x1, y1, sep);
-			write(fd, line.str, line.size);
-			arena_pop_to(arena, 0);
+			written = str8fmt_write(fd, &arena, STR8_LIT("    {\"x0\":%.16f, \"y0\":%.16f, \"x1\":%.16f, \"y1\":%.16f}%s"), x0, y0, x1, y1, sep);
+			if (written == -1) return;
+			arena_pop_to(&arena, 0);
 
 			haversine_distance = ReferenceHaversine(x0, y0, x1, y1, 6372.8);
 			sum += sum_coef*haversine_distance;
@@ -133,9 +134,9 @@ void generate_and_write_data(s32 fd, u64 seed, u64 n_pairs, u8 flag)
 			y1 = rand_in_range(&ctx, y_center - y_radius, y_center + y_radius);
 
 			sep = n == (n_pairs - 1) ? STR8_LIT("\n") : STR8_LIT(",\n");
-			line = str8_fmt(arena, STR8_LIT("    {\"x0\":%.16f, \"y0\":%.16f, \"x1\":%.16f, \"y1\":%.16f}%s"), x0, y0, x1, y1, sep);
-			write(fd, line.str, line.size);
-			arena_pop_to(arena, 0);
+			written = str8fmt_write(fd, &arena, STR8_LIT("    {\"x0\":%.16f, \"y0\":%.16f, \"x1\":%.16f, \"y1\":%.16f}%s"), x0, y0, x1, y1, sep);
+			if (written == -1) return;
+			arena_pop_to(&arena, 0);
 
 			haversine_distance = ReferenceHaversine(x0, y0, x1, y1, 6372.8);
 			sum += sum_coef*haversine_distance;
@@ -147,8 +148,7 @@ void generate_and_write_data(s32 fd, u64 seed, u64 n_pairs, u8 flag)
 			}
 		}
 	}
-	String8 json_end = str8_fmt(arena, STR8_LIT("]}\n"));
-	write(fd, json_end.str, json_end.size);
+	written = str8fmt_write(fd, &arena, STR8_LIT("]}\n"));
 
 	char *method_name = flag == typeUniform ? "uniform" : "cluster";
 	fprintf(stdout, "Method: %s\n", method_name);
