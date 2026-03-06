@@ -149,6 +149,7 @@ void generate_and_write_data(s32 fd, u64 seed, u64 n_pairs, u8 flag)
 		}
 	}
 	written = str8fmt_write(fd, &arena, STR8_LIT("]}\n"));
+	if (written == -1) return;
 
 	char *method_name = flag == typeUniform ? "uniform" : "cluster";
 	fprintf(stdout, "Method: %s\n", method_name);

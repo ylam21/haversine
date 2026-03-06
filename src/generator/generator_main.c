@@ -1,8 +1,8 @@
-#include "base/base_inc.h"
-#include "generator/generator_inc.h"
+#include "../base/base_inc.h"
+#include "generator_inc.h"
 
-#include "base/base_inc.c"
-#include "generator/generator_inc.c"
+#include "../base/base_inc.c"
+#include "generator_inc.c"
 
 void print_usage(void)
 {
