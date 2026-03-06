@@ -8,5 +8,6 @@ fmt_handler_t specifier_table[256] =
     ['x'] = handle_x,
     ['X'] = handle_upx,
     ['p'] = handle_ptr,
+    ['f'] = handle_float,
     ['%'] = handle_percent_literal
 };
