@@ -4,9 +4,11 @@
 #include "../base/base_inc.c"
 #include "generator_inc.c"
 
+#define PROGRAM_NAME_GEN "haversine_generator"
+
 void print_usage(void)
 {
-	fprintf(stdout,"Usage: ./%s <uniform/cluster> <seed> <number_of_pairs>\n", PROGRAM_NAME);
+	fprintf(stdout,"Usage: ./%s <uniform/cluster> <seed> <number_of_pairs>\n", PROGRAM_NAME_GEN);
 }
 
 int main(int argc, char **argv)
@@ -37,13 +39,20 @@ int main(int argc, char **argv)
 	}
 
 	s32 fd = open("data.json", O_CREAT | O_TRUNC | O_WRONLY, 0777);
-	if (fd == 1)
+	if (fd == -1)
 	{
 		fprintf(stderr, "Error: cannot create a file\n");
 		return 1;
 	}
 
-	generate_and_write_data(fd, seed, n_pairs, generatorTypeFlag);
+	s32 fd_ans= open("answers.f64", O_CREAT | O_TRUNC | O_WRONLY, 0777);
+	if (fd == -1)
+	{
+		fprintf(stderr, "Error: cannot create a file answers.f64\n");
+		return 1;
+	}
+
+	generate_and_write_data(fd, fd_ans, seed, n_pairs, generatorTypeFlag);
 
 	return 0;
 }

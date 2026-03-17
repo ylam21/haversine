@@ -1,0 +1,9 @@
+.vscode
+
+*.d
+*.json
+*.f64
+
+# filenames of binaries 
+generate_json
+parse_json

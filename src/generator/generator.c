@@ -71,7 +71,16 @@ f64 rand_in_range(ranctx *ctx, f64 min, f64 max)
 	return (1.0 - t)*min + t*max;
 }
 
-void generate_and_write_data(s32 fd, u64 seed, u64 n_pairs, u8 flag)
+
+void write_floats_to_fd(s32 fd, f64 *x0, f64 *y0, f64 *x1, f64 *y1)
+{
+	write(fd, x0, sizeof(f64));
+	write(fd, y0, sizeof(f64));
+	write(fd, x1, sizeof(f64));
+	write(fd, y1, sizeof(f64));
+}
+
+void generate_and_write_data(s32 fd, s32 fd_ans, u64 seed, u64 n_pairs, u8 flag)
 {
 	Arena arena = {0};
 	u8 buf[KB(1)];
@@ -98,6 +107,7 @@ void generate_and_write_data(s32 fd, u64 seed, u64 n_pairs, u8 flag)
 			y0 = rand_in_range(&ctx, -MAX_ALLOWED_Y, MAX_ALLOWED_Y);
 			x1 = rand_in_range(&ctx, -MAX_ALLOWED_X, MAX_ALLOWED_X);
 			y1 = rand_in_range(&ctx, -MAX_ALLOWED_Y, MAX_ALLOWED_Y);
+			write_floats_to_fd(fd_ans, &x0, &y0, &x1, &y1); // NOTE: not imporant for the json generator logic
 			
 			sep = n == (n_pairs - 1) ? STR8_LIT("\n") : STR8_LIT(",\n");
 			written = str8fmt_write(fd, &arena, STR8_LIT("    {\"x0\":%.16f, \"y0\":%.16f, \"x1\":%.16f, \"y1\":%.16f}%s"), x0, y0, x1, y1, sep);
@@ -132,6 +142,7 @@ void generate_and_write_data(s32 fd, u64 seed, u64 n_pairs, u8 flag)
 			y0 = rand_in_range(&ctx, y_center - y_radius, y_center + y_radius);
 			x1 = rand_in_range(&ctx, x_center - x_radius, x_center + x_radius);
 			y1 = rand_in_range(&ctx, y_center - y_radius, y_center + y_radius);
+			write_floats_to_fd(fd_ans, &x0, &y0, &x1, &y1); // NOTE: not imporant for the json generator logic
 
 			sep = n == (n_pairs - 1) ? STR8_LIT("\n") : STR8_LIT(",\n");
 			written = str8fmt_write(fd, &arena, STR8_LIT("    {\"x0\":%.16f, \"y0\":%.16f, \"x1\":%.16f, \"y1\":%.16f}%s"), x0, y0, x1, y1, sep);

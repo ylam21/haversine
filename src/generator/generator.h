@@ -17,7 +17,7 @@ typedef struct ranctx
 f64 ReferenceHaversine(f64 X0, f64 Y0, f64 X1, f64 Y1, f64 EarthRadius);
 f64 RadiansFromDegrees(f64 Degrees);
 f64 Square(f64 A);
-void generate_and_write_data(s32 fd, u64 seed, u64 n_pairs, u8 flag);
+void generate_and_write_data(s32 fd, s32 fd_ans, u64 seed, u64 n_pairs, u8 flag);
 f64 rand_in_range(ranctx *ctx, f64 min, f64 max);
 void raninit(ranctx *x, u64 seed);
 u64 ranval(ranctx *x);
