@@ -20,7 +20,7 @@ u8 *locate_str8_in_str8(String8 src, String8 target)
 	return 0;
 }
 
-u64 parse_point_from_json(s32 fd, String8 point, String8 data)
+u64 parse_point_from_json(s32 fd, String8 point, String8 data, f64 *acc)
 {
 	u8 *ptr = locate_str8_in_str8(data, point);
 	if (ptr)
@@ -30,6 +30,7 @@ u64 parse_point_from_json(s32 fd, String8 point, String8 data)
 
 		char *endptr;
 		f64 val = strtod((char *)(ptr + offset), &endptr);
+		*acc += val;
 		write(fd, &val, sizeof(f64));
 
 		return (u64)((u8*)endptr - data.str);
@@ -38,26 +39,29 @@ u64 parse_point_from_json(s32 fd, String8 point, String8 data)
 }
 
 // This is a simple parser and it is not generic at all.
+// It takes json file as an input and outputs a raw binary of floats (f64) to a new file.
 void json_parse(s32 fd, String8 json)
 {
+	f64 acc = 0;
 	u64 consumed = 0;
 	while (json.size > 0)
 	{
-		consumed = parse_point_from_json(fd, STR8_LIT("x0"), json);
-		if (consumed == 0) return;
+		consumed = parse_point_from_json(fd, STR8_LIT("x0"), json, &acc);
+		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;
-		consumed = parse_point_from_json(fd, STR8_LIT("y0"), json);
-		if (consumed == 0) return;
+		consumed = parse_point_from_json(fd, STR8_LIT("y0"), json, &acc);
+		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;
-		consumed = parse_point_from_json(fd, STR8_LIT("x1"), json);
-		if (consumed == 0) return;
+		consumed = parse_point_from_json(fd, STR8_LIT("x1"), json, &acc);
+		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;
-		consumed = parse_point_from_json(fd, STR8_LIT("y1"), json);
-		if (consumed == 0) return;
+		consumed = parse_point_from_json(fd, STR8_LIT("y1"), json, &acc);
+		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;
 	}
+	fprintf(stdout, "Accumulator value: %.16f\n", acc);
 }

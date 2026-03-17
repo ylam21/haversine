@@ -82,6 +82,8 @@ void write_floats_to_fd(s32 fd, f64 *x0, f64 *y0, f64 *x1, f64 *y1)
 
 void generate_and_write_data(s32 fd, s32 fd_ans, u64 seed, u64 n_pairs, u8 flag)
 {
+	f64 acc = 0;
+
 	Arena arena = {0};
 	u8 buf[KB(1)];
 	arena_init(&arena, buf, KB(1));
@@ -108,6 +110,7 @@ void generate_and_write_data(s32 fd, s32 fd_ans, u64 seed, u64 n_pairs, u8 flag)
 			x1 = rand_in_range(&ctx, -MAX_ALLOWED_X, MAX_ALLOWED_X);
 			y1 = rand_in_range(&ctx, -MAX_ALLOWED_Y, MAX_ALLOWED_Y);
 			write_floats_to_fd(fd_ans, &x0, &y0, &x1, &y1); // NOTE: not imporant for the json generator logic
+			acc += x0 + y0 + x1 +y1; // NOTE: not imporant for the json generator logic
 			
 			sep = n == (n_pairs - 1) ? STR8_LIT("\n") : STR8_LIT(",\n");
 			written = str8fmt_write(fd, &arena, STR8_LIT("    {\"x0\":%.16f, \"y0\":%.16f, \"x1\":%.16f, \"y1\":%.16f}%s"), x0, y0, x1, y1, sep);
@@ -143,6 +146,7 @@ void generate_and_write_data(s32 fd, s32 fd_ans, u64 seed, u64 n_pairs, u8 flag)
 			x1 = rand_in_range(&ctx, x_center - x_radius, x_center + x_radius);
 			y1 = rand_in_range(&ctx, y_center - y_radius, y_center + y_radius);
 			write_floats_to_fd(fd_ans, &x0, &y0, &x1, &y1); // NOTE: not imporant for the json generator logic
+			acc += x0 + y0 + x1 +y1; // NOTE: not imporant for the json generator logic
 
 			sep = n == (n_pairs - 1) ? STR8_LIT("\n") : STR8_LIT(",\n");
 			written = str8fmt_write(fd, &arena, STR8_LIT("    {\"x0\":%.16f, \"y0\":%.16f, \"x1\":%.16f, \"y1\":%.16f}%s"), x0, y0, x1, y1, sep);
@@ -167,4 +171,5 @@ void generate_and_write_data(s32 fd, s32 fd_ans, u64 seed, u64 n_pairs, u8 flag)
 	fprintf(stdout, "Seed: %lu\n", seed);
 	fprintf(stdout, "Pair count: %lu\n", n_pairs);
 	fprintf(stdout, "Expected sum: %.16f\n", sum);
+	fprintf(stdout, "Accumulator value: %.16f\n", acc);
 }

@@ -32,7 +32,6 @@ typedef int64_t s64;
 typedef float f32;
 typedef double f64;
 
-#define PROGRAM_NAME "haversine_generator"
 
 enum generatorTypeFlag
 {
