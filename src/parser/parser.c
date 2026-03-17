@@ -40,10 +40,8 @@ u64 parse_point_from_json(s32 fd, String8 point, String8 data)
 // This is a simple parser and it is not generic at all.
 void json_parse(s32 fd, String8 json)
 {
-	u64 pos = 0;
-	u64 end = json.size;
 	u64 consumed = 0;
-	while (pos < end)
+	while (json.size > 0)
 	{
 		consumed = parse_point_from_json(fd, STR8_LIT("x0"), json);
 		if (consumed == 0) return;
@@ -61,6 +59,5 @@ void json_parse(s32 fd, String8 json)
 		if (consumed == 0) return;
 		json.str += consumed;
 		json.size -= consumed;
-
 	}
 }
