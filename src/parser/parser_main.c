@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 	}
 
 	String8 json = (String8){.str = buffer, .size = (u64)read_bytes};
-	json_parse(fd_out, json);
+	json_parse_to_fd(fd_out, json);
 
 	return 0;
 }

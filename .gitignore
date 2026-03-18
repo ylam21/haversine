@@ -7,3 +7,5 @@
 # filenames of binaries 
 generate_json
 parse_json
+haversine
+timer
