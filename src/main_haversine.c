@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 	f64 x0, y0, x1, y1;
 
 	f64 haversine_distance;
-	f64 sum;
+	f64 sum = 0;
 	u64 n_pairs = arr.count / 4;
 	f64 sum_coef = 1.0 / (f64)n_pairs;
 
@@ -102,6 +102,7 @@ int main(int argc, char **argv)
 		haversine_distance = ReferenceHaversine(x0, y0, x1, y1, 6372.8);
 		sum += sum_coef * haversine_distance;
 
+		arr.arr += 4;
 		count += 4;
 	}
 
@@ -121,14 +122,14 @@ int main(int argc, char **argv)
 
 	printf("Input size: %u\n", read_bytes);
 	printf("Pair count: %lu\n", n_pairs);
-	printf("Haversine sum: %f\n\n", sum);
+	printf("Haversine sum: %.16f\n\n", sum);
 
 	printf("Total time: %lu (CPU freq: %lu)\n", cf.os_time_start - cf.os_time_end, cpu_freq);
-	printf(" Startup: %lu (%.2f%)\n", startup_freq, (f64)startup_freq / (f64)cpu_freq * 100);
-	printf(" Read: %lu (%.2f%)\n", read_freq, (f64)read_freq / (f64)cpu_freq * 100);
-	printf(" MiscSetup: %lu (%.2f%)\n", misc_setup_freq, (f64)misc_setup_freq / (f64)cpu_freq * 100);
-	printf(" Parse: %lu (%.2f%)\n", parse_freq, (f64)parse_freq / (f64)cpu_freq * 100);
-	printf(" Sum: %lu (%.2f%)\n", sum_freq, (f64)sum_freq / (f64)cpu_freq * 100);
+	printf(" Startup: %lu (%.2f%%)\n", startup_freq, (f64)startup_freq / (f64)cpu_freq * 100);
+	printf(" Read: %lu (%.2f%%)\n", read_freq, (f64)read_freq / (f64)cpu_freq * 100);
+	printf(" MiscSetup: %lu (%.2f%%)\n", misc_setup_freq, (f64)misc_setup_freq / (f64)cpu_freq * 100);
+	printf(" Parse: %lu (%.2f%%)\n", parse_freq, (f64)parse_freq / (f64)cpu_freq * 100);
+	printf(" Sum: %lu (%.2f%%)\n", sum_freq, (f64)sum_freq / (f64)cpu_freq * 100);
 
 	return 0;
 }
