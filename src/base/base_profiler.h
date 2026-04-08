@@ -36,7 +36,7 @@ void profiler_init(void);
 void profiler_end_and_dump(Arena *arena, s32 fd);
 u64 get_os_timestamp_t(void);
 
-#define PROFILER_BEGIN(id_name) \
+#define PROFILER_BLOCK_BEGIN(id_name) \
 	static const u32 prof_loc_##id_name = __COUNTER__; \
 	g_profiler_blocks[prof_loc_##id_name].name = STR8_LIT(#id_name); \
 	u32 prof_was_root_##id_name = (g_profiler_blocks[prof_loc_##id_name].active_depth == 0); \
@@ -45,7 +45,7 @@ u64 get_os_timestamp_t(void);
 	g_profiler_current_parent = prof_loc_##id_name; \
 	u64 prof_start_##id_name = __rdtsc()
 
-#define PROFILER_END(id_name) \
+#define PROFILER_BLOCK_END(id_name) \
 	u64 prof_end_##id_name = __rdtsc(); \
 	u64 prof_elapsed_##id_name = prof_end_##id_name - prof_start_##id_name; \
 	g_profiler_blocks[prof_loc_##id_name].active_depth -= 1; \

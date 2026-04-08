@@ -1,4 +1,5 @@
 #include "base/base_inc.h"
+#include "base/base_profiler.h"
 #include "parser/parser_inc.h"
 #include "generator/generator_inc.h"
 
@@ -20,7 +21,7 @@ int main(int argc, char **argv)
 
 	profiler_init();
 
-	PROFILER_BEGIN(startup);
+	PROFILER_BLOCK_BEGIN(startup);
 
 	if (argc != 2)
 	{
@@ -43,9 +44,9 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-    PROFILER_END(startup);
+    PROFILER_BLOCK_END(startup);
 
-    PROFILER_BEGIN(read);
+    PROFILER_BLOCK_BEGIN(read);
 
 	s32 read_bytes = read(fd, buffer, buffer_size);
 	if (read_bytes == -1)
@@ -54,9 +55,9 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	PROFILER_END(read);
+	PROFILER_BLOCK_END(read);
 
-	PROFILER_BEGIN(misc);
+	PROFILER_BLOCK_BEGIN(misc);
 
 	String8 json = (String8){.str = buffer, .size = (u64)read_bytes};
 	Arena *arena = arena_alloc(GIBIBYTE(1));
@@ -65,16 +66,16 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	PROFILER_END(misc);
+	PROFILER_BLOCK_END(misc);
 
-	PROFILER_BEGIN(parse);
+	PROFILER_BLOCK_BEGIN(parse);
 
 	f64_array arr = json_parse_to_buffer(arena, json);
 	assert((arr.count & 0x3) == 0);  // Exit the program if count is not divisible by 4, since 4 floats form 2 pairs
 
-	PROFILER_END(parse);
+	PROFILER_BLOCK_END(parse);
 
-	PROFILER_BEGIN(sum);
+	PROFILER_BLOCK_BEGIN(sum);
 
 	f64 x0, y0, x1, y1;
 
@@ -100,7 +101,7 @@ int main(int argc, char **argv)
 		count += 4;
 	}
 
-	PROFILER_END(sum);
+	PROFILER_BLOCK_END(sum);
 	profiler_end_and_dump(arena, STDOUT_FILENO);
 
 	return 0;
