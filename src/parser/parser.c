@@ -20,7 +20,7 @@ u8 *locate_str8_in_str8(String8 src, String8 target)
 	return 0;
 }
 
-u64 parse_point_from_json_to_buffer(Arena *arena, f64_array *arr, String8 point, String8 data, f64 *acc)
+u64 parse_point_from_json_to_buffer(Arena *arena, f64_array *arr, String8 point, String8 data)
 {
     PROFILER_BLOCK_BEGIN(parse_locate_str);
 	u8 *ptr = locate_str8_in_str8(data, point);
@@ -34,8 +34,6 @@ u64 parse_point_from_json_to_buffer(Arena *arena, f64_array *arr, String8 point,
 		char *endptr;
 		f64 val = strtod((char *)(ptr + offset), &endptr);
 		PROFILER_BLOCK_END(parse_strtod_conv);
-
-		*acc += val;
 
 		PROFILER_BLOCK_BEGIN(parse_arena_push);
 		f64 *dest = arena_push_packed(arena, sizeof(f64));
@@ -63,29 +61,26 @@ f64_array json_parse_to_buffer(Arena *arena, String8 json)
 		.count = 0,
 	};
 
-
-	f64 acc = 0;
 	u64 consumed = 0;
 	while (json.size > 0)
 	{
-		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("x"), json, &acc);
+		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("x"), json);
 		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;
-		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("y"), json, &acc);
+		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("y"), json);
 		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;
-		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("x"), json, &acc);
+		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("x"), json);
 		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;
-		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("y"), json, &acc);
+		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("y"), json);
 		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;
 	}
-	fprintf(stdout, "Accumulator value: %.16f\n", acc);
 
 	return arr;
 }

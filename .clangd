@@ -6,7 +6,3 @@ CompileFlags:
     - "src/generator/generator_inc.h"
     - "-include"
     - "src/parser/parser_inc.h"
-    - "ferror-limit=0"
-
-Diagnostics:
-  UnusedIncludes: None

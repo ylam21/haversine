@@ -4,6 +4,12 @@
 #include <x86intrin.h>
 #include <sys/time.h>
 
+#ifndef ENABLE_PROFILER
+#define ENABLE_PROFILER 0
+#endif
+
+#if ENABLE_PROFILER
+
 #define PROFILER_MAX_BLOCK_COUNT ((u64)4096)
 #define OS_TIMER_FREQUENCY ((u64)1000000)
 
@@ -33,7 +39,7 @@ extern profiler g_profiler;
 extern u32 g_profiler_current_parent;
 
 void profiler_init(void);
-void profiler_end_and_dump(Arena *arena, s32 fd);
+void profiler_end_and_print(Arena *arena, s32 fd);
 u64 get_os_timestamp_t(void);
 
 #define PROFILER_BLOCK_BEGIN(id_name) \
@@ -58,5 +64,14 @@ u64 get_os_timestamp_t(void);
 		g_profiler_blocks[g_profiler_current_parent].tsc_exclusive -= prof_elapsed_##id_name; \
 	} \
 	g_profiler_blocks[prof_loc_##id_name].hit_count += 1
+
+#else
+
+#define PROFILER_BLOCK_BEGIN(id_name)
+#define PROFILER_BLOCK_END(id_name)
+#define profiler_init()
+#define profiler_end_and_print(arena, fd)
+
+#endif
 
 #endif

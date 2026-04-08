@@ -1,4 +1,5 @@
-#include "base_string.h"
+#if ENABLE_PROFILER
+
 profiler_block g_profiler_blocks[PROFILER_MAX_BLOCK_COUNT] = {0};
 profiler g_profiler = {0};
 u32 g_profiler_current_parent = PROFILER_NULL_PARENT;
@@ -16,7 +17,7 @@ void profiler_init(void)
 	g_profiler.profiler_tsc_start = __rdtsc();
 }
 
-void profiler_end_and_dump(Arena *arena, s32 fd)
+void profiler_end_and_print(Arena *arena, s32 fd)
 {
 	g_profiler.os_time_end = get_os_timestamp();
 	g_profiler.profiler_tsc_end = __rdtsc();
@@ -62,3 +63,5 @@ void profiler_end_and_dump(Arena *arena, s32 fd)
 		str8fmt_write(fd, arena, STR8_LIT("-------------------------\n"));
 	}
 }
+
+#endif

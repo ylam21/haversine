@@ -19,22 +19,22 @@ f64 ReferenceHaversine(f64 X0, f64 Y0, f64 X1, f64 Y1, f64 EarthRadius)
        Instead, it attempts to follow, as closely as possible, the formula used in the real-world
        question on which these homework exercises are loosely based.
     */
-    
+
     f64 lat1 = Y0;
     f64 lat2 = Y1;
     f64 lon1 = X0;
     f64 lon2 = X1;
-    
+
     f64 dLat = RadiansFromDegrees(lat2 - lat1);
     f64 dLon = RadiansFromDegrees(lon2 - lon1);
     lat1 = RadiansFromDegrees(lat1);
     lat2 = RadiansFromDegrees(lat2);
-    
+
     f64 a = Square(sin(dLat/2.0)) + cos(lat1)*cos(lat2)*Square(sin(dLon/2));
     f64 c = 2.0*asin(sqrt(a));
-    
+
     f64 Result = EarthRadius * c;
-    
+
     return Result;
 }
 // END OF: COPIED FROM examples
@@ -88,12 +88,12 @@ void generate_and_write_data(s32 fd, s32 fd_ans, u64 seed, u64 n_pairs, u8 flag)
 	u64 buffer_size = KIBIBYTE(1);
 	u8 buffer[buffer_size];
 	arena_init(&arena, buffer, buffer_size);
-	
+
 	ranctx ctx = {0};
 	raninit(&ctx, seed);
-	
+
 	f64 x0, y0, x1, y1 = 0;
-	
+
 	f64 sum = 0;
 	f64 sum_coef  = 1.0 / (f64)n_pairs;
 	f64 haversine_distance = 0;
@@ -112,7 +112,7 @@ void generate_and_write_data(s32 fd, s32 fd_ans, u64 seed, u64 n_pairs, u8 flag)
 			y1 = rand_in_range(&ctx, -MAX_ALLOWED_Y, MAX_ALLOWED_Y);
 			write_floats_to_fd(fd_ans, &x0, &y0, &x1, &y1); // NOTE: not imporant for the json generator logic
 			acc += x0 + y0 + x1 +y1; // NOTE: not imporant for the json generator logic
-			
+
 			sep = n == (n_pairs - 1) ? STR8_LIT("\n") : STR8_LIT(",\n");
 			written = str8fmt_write(fd, &arena, STR8_LIT("    {\"x0\":%.16f, \"y0\":%.16f, \"x1\":%.16f, \"y1\":%.16f}%s"), x0, y0, x1, y1, sep);
 			if (written == -1) return;
@@ -141,13 +141,12 @@ void generate_and_write_data(s32 fd, s32 fd_ans, u64 seed, u64 n_pairs, u8 flag)
 				y_center = rand_in_range(&ctx, -MAX_ALLOWED_Y, MAX_ALLOWED_Y);
 				y_radius = rand_in_range(&ctx, 5, MAX_ALLOWED_Y / 4);
 			}
-			
+
 			x0 = rand_in_range(&ctx, x_center - x_radius, x_center + x_radius);
 			y0 = rand_in_range(&ctx, y_center - y_radius, y_center + y_radius);
 			x1 = rand_in_range(&ctx, x_center - x_radius, x_center + x_radius);
 			y1 = rand_in_range(&ctx, y_center - y_radius, y_center + y_radius);
 			write_floats_to_fd(fd_ans, &x0, &y0, &x1, &y1); // NOTE: not imporant for the json generator logic
-			acc += x0 + y0 + x1 +y1; // NOTE: not imporant for the json generator logic
 
 			sep = n == (n_pairs - 1) ? STR8_LIT("\n") : STR8_LIT(",\n");
 			written = str8fmt_write(fd, &arena, STR8_LIT("    {\"x0\":%.16f, \"y0\":%.16f, \"x1\":%.16f, \"y1\":%.16f}%s"), x0, y0, x1, y1, sep);
@@ -172,5 +171,4 @@ void generate_and_write_data(s32 fd, s32 fd_ans, u64 seed, u64 n_pairs, u8 flag)
 	fprintf(stdout, "Seed: %lu\n", seed);
 	fprintf(stdout, "Pair count: %lu\n", n_pairs);
 	fprintf(stdout, "Expected sum: %.16f\n", sum);
-	fprintf(stdout, "Accumulator value: %.16f\n", acc);
 }

@@ -1,12 +1,17 @@
 #include "base/base_inc.h"
-#include "base/base_string.h"
 #include "parser/parser_inc.h"
 #include "generator/generator_inc.h"
 
 #include "base/base_inc.c"
 #include "parser/parser_inc.c"
 #include "generator/generator_inc.c"
-#include <unistd.h>
+
+void print_result_stats(Arena *arena, u64 read_bytes, u64 n_pairs, f64 sum)
+{
+    str8fmt_write(STDOUT_FILENO, arena, STR8_LIT("\n--- HAVERSINE RESULTS ---\n"));
+    str8fmt_write(STDOUT_FILENO, arena, STR8_LIT("Input size: %u\nPair count: %u\nHaversine sum: %.2f\n"), read_bytes, n_pairs, sum);
+    str8fmt_write(STDOUT_FILENO, arena, STR8_LIT("-------------------------\n"));
+}
 
 void print_usage(Arena *arena)
 {
@@ -99,8 +104,10 @@ int main(int argc, char **argv)
 		count += 4;
 	}
 
+	print_result_stats(life_arena, read_bytes, n_pairs, sum);
+
 	PROFILER_BLOCK_END(sum);
-	profiler_end_and_dump(arena, STDOUT_FILENO);
+	profiler_end_and_print(arena, STDOUT_FILENO);
 
 	return 0;
 }

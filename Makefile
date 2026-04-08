@@ -19,7 +19,7 @@ $(NAME_GEN)_debug: $(SRC_GEN)
 	$(CC) $(CFLAGS) $(DBG_FLAGS) $< -o $@ -lm
 
 $(NAME_HAVER): $(SRC_HAVER)
-	$(CC) $(CFLAGS) $< -o $@ -lm
+	$(CC) $(CFLAGS) -DENABLE_PROFILER=1 $< -o $@ -lm
 
 $(NAME_HAVER)_debug: $(SRC_HAVER)
 	$(CC) $(CFLAGS) $(DBG_FLAGS) $< -o $@ -lm
