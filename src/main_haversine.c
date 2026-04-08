@@ -48,17 +48,15 @@ int main(int argc, char **argv)
     PROFILER_BEGIN(read);
 
 	s32 read_bytes = read(fd, buffer, buffer_size);
-	if (read_bytes == -1) return 0;
-
-	PROFILER_END(read);
-
-	PROFILER_BEGIN(misc);
-
 	if (read_bytes == -1)
 	{
 		fprintf(stderr, "Error: cannot read %s\n", argv[1]);
 		return 1;
 	}
+
+	PROFILER_END(read);
+
+	PROFILER_BEGIN(misc);
 
 	String8 json = (String8){.str = buffer, .size = (u64)read_bytes};
 	Arena *arena = arena_alloc(GIBIBYTE(1));
