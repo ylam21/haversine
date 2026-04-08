@@ -16,6 +16,7 @@ struct profiler_block
 	u64 tsc_inclusive;
 	u64 tsc_exclusive;
 	u64 hit_count;
+	u32 active_depth;
 };
 
 typedef struct profiler profiler;
@@ -38,6 +39,8 @@ u64 get_os_timestamp_t(void);
 #define PROFILER_BEGIN(id_name) \
 	static const u32 prof_loc_##id_name = __COUNTER__; \
 	g_profiler_blocks[prof_loc_##id_name].name = STR8_LIT(#id_name); \
+	u32 prof_was_root_##id_name = (g_profiler_blocks[prof_loc_##id_name].active_depth == 0); \
+	g_profiler_blocks[prof_loc_##id_name].active_depth += 1; \
 	u32 prof_parent_##id_name = g_profiler_current_parent; \
 	g_profiler_current_parent = prof_loc_##id_name; \
 	u64 prof_start_##id_name = __rdtsc()
@@ -45,7 +48,10 @@ u64 get_os_timestamp_t(void);
 #define PROFILER_END(id_name) \
 	u64 prof_end_##id_name = __rdtsc(); \
 	u64 prof_elapsed_##id_name = prof_end_##id_name - prof_start_##id_name; \
-	g_profiler_blocks[prof_loc_##id_name].tsc_inclusive += prof_elapsed_##id_name; \
+	g_profiler_blocks[prof_loc_##id_name].active_depth -= 1; \
+	if (prof_was_root_##id_name) { \
+	    g_profiler_blocks[prof_loc_##id_name].tsc_inclusive += prof_elapsed_##id_name; \
+	} \
 	g_profiler_blocks[prof_loc_##id_name].tsc_exclusive += prof_elapsed_##id_name; \
 	g_profiler_current_parent = prof_parent_##id_name; \
 	if (g_profiler_current_parent != PROFILER_NULL_PARENT) { \
