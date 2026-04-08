@@ -1,8 +1,9 @@
-#if ENABLE_PROFILER
-
-profiler_block g_profiler_blocks[PROFILER_MAX_BLOCK_COUNT] = {0};
 profiler g_profiler = {0};
+
+#if ENABLE_PROFILER
+profiler_block g_profiler_blocks[PROFILER_MAX_BLOCK_COUNT] = {0};
 u32 g_profiler_current_parent = PROFILER_NULL_PARENT;
+#endif
 
 u64 get_os_timestamp(void)
 {
@@ -30,8 +31,9 @@ void profiler_end_and_print(Arena *arena, s32 fd)
 		u64 cpu_freq = OS_TIMER_FREQUENCY * total_cpu_elapsed / os_time_elapsed;
 
 		str8fmt_write(fd, arena, STR8_LIT("\n--- PROFILING RESULTS ---\n"));
-		str8fmt_write(fd, arena, STR8_LIT("Total time: %u milliseconds (CPU freq: %u)\n\n"), os_time_elapsed / 1000, cpu_freq);
+		str8fmt_write(fd, arena, STR8_LIT("Total time: %u milliseconds (CPU freq: %u)\n"), os_time_elapsed / 1000, cpu_freq);
 
+		#if ENABLE_PROFILER
 		u32 i = 0;
 		while (i < PROFILER_MAX_BLOCK_COUNT)
 		{
@@ -60,8 +62,7 @@ void profiler_end_and_print(Arena *arena, s32 fd)
 			}
 			i += 1;
 		}
+		#endif
 		str8fmt_write(fd, arena, STR8_LIT("-------------------------\n"));
 	}
 }
-
-#endif

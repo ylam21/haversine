@@ -8,11 +8,10 @@
 #define ENABLE_PROFILER 0
 #endif
 
-#if ENABLE_PROFILER
-
-#define PROFILER_MAX_BLOCK_COUNT ((u64)4096)
 #define OS_TIMER_FREQUENCY ((u64)1000000)
 
+#if ENABLE_PROFILER
+#define PROFILER_MAX_BLOCK_COUNT ((u64)4096)
 #define PROFILER_NULL_PARENT 0xFFFFFFFF
 
 typedef struct profiler_block profiler_block;
@@ -25,6 +24,11 @@ struct profiler_block
 	u32 active_depth;
 };
 
+extern profiler_block g_profiler_blocks[PROFILER_MAX_BLOCK_COUNT];
+extern u32 g_profiler_current_parent;
+
+#endif
+
 typedef struct profiler profiler;
 struct profiler
 {
@@ -34,14 +38,13 @@ struct profiler
 	u64 profiler_tsc_end;
 };
 
-extern profiler_block g_profiler_blocks[PROFILER_MAX_BLOCK_COUNT];
-extern profiler g_profiler;
-extern u32 g_profiler_current_parent;
-
 void profiler_init(void);
 void profiler_end_and_print(Arena *arena, s32 fd);
 u64 get_os_timestamp_t(void);
 
+extern profiler g_profiler;
+
+#if ENABLE_PROFILER
 #define PROFILER_BLOCK_BEGIN(id_name) \
 	static const u32 prof_loc_##id_name = __COUNTER__; \
 	g_profiler_blocks[prof_loc_##id_name].name = STR8_LIT(#id_name); \
@@ -64,13 +67,10 @@ u64 get_os_timestamp_t(void);
 		g_profiler_blocks[g_profiler_current_parent].tsc_exclusive -= prof_elapsed_##id_name; \
 	} \
 	g_profiler_blocks[prof_loc_##id_name].hit_count += 1
-
 #else
 
 #define PROFILER_BLOCK_BEGIN(id_name)
 #define PROFILER_BLOCK_END(id_name)
-#define profiler_init()
-#define profiler_end_and_print(arena, fd)
 
 #endif
 
