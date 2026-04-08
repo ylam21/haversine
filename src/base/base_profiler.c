@@ -29,7 +29,7 @@ void profiler_end_and_dump(Arena *arena, s32 fd)
 		u64 cpu_freq = OS_TIMER_FREQUENCY * total_cpu_elapsed / os_time_elapsed;
 
 		str8fmt_write(fd, arena, STR8_LIT("\n--- PROFILING RESULTS ---\n"));
-		str8fmt_write(fd, arena, STR8_LIT("Total time: %u millisec (CPU freq: %u)\n\n"), os_time_elapsed, cpu_freq);
+		str8fmt_write(fd, arena, STR8_LIT("Total time: %u microseconds (CPU freq: %u)\n\n"), os_time_elapsed, cpu_freq);
 
 		u32 i = 0;
 		while (i < PROFILER_MAX_BLOCK_COUNT)
@@ -42,7 +42,7 @@ void profiler_end_and_dump(Arena *arena, s32 fd)
 				if (inc_percent == exc_percent)
 				{
 				    // Note: This block does not have any nested/children blocks
-					str8fmt_write(fd, arena, STR8_LIT("%-20s: %-10u cyc [%5.2f%%] | %-19s | Hits %-8u\n"),
+					str8fmt_write(fd, arena, STR8_LIT("%-20s: %-10u cycles [%5.2f%%] | %-19s | Hits %-8u\n"),
 					b->name,
 					b->tsc_inclusive, inc_percent,
 					STR8_LIT("No children blocks"),
@@ -50,7 +50,7 @@ void profiler_end_and_dump(Arena *arena, s32 fd)
 				}
 				else
 				{
-				    str8fmt_write(fd, arena, STR8_LIT("%-20s: %-10u cyc [%5.2f%%] | Exclusive: [%5.2f%%] | Hits %-8u\n"),
+				    str8fmt_write(fd, arena, STR8_LIT("%-20s: %-10u cycles [%5.2f%%] | Exclusive: [%5.2f%%] | Hits %-8u\n"),
 			        b->name,
 				    b->tsc_inclusive, inc_percent,
 			        exc_percent,
