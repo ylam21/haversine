@@ -29,7 +29,7 @@ void profiler_end_and_dump(Arena *arena, s32 fd)
 		u64 cpu_freq = OS_TIMER_FREQUENCY * total_cpu_elapsed / os_time_elapsed;
 
 		str8fmt_write(fd, arena, STR8_LIT("\n--- PROFILING RESULTS ---\n"));
-		str8fmt_write(fd, arena, STR8_LIT("Total time: %u microseconds (CPU freq: %u)\n\n"), os_time_elapsed, cpu_freq);
+		str8fmt_write(fd, arena, STR8_LIT("Total time: %u milliseconds (CPU freq: %u)\n\n"), os_time_elapsed / 1000, cpu_freq);
 
 		u32 i = 0;
 		while (i < PROFILER_MAX_BLOCK_COUNT)
