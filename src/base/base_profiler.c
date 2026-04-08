@@ -1,7 +1,7 @@
 #include "base_profiler.h"
-#include "base_string.h"
 profiler_block g_profiler_blocks[PROFILER_MAX_BLOCK_COUNT] = {0};
 profiler g_profiler = {0};
+u32 g_profiler_current_parent = PROFILER_NULL_PARENT;
 
 u64 get_os_timestamp(void)
 {
@@ -37,8 +37,13 @@ void profiler_end_and_dump(Arena *arena, s32 fd)
 			profiler_block *b = &g_profiler_blocks[i];
 			if (b->hit_count > 0)
 			{
-				f64 percent = ((f64)b->tsc_elapsed / (f64)total_cpu_elapsed) * 100.0;
-				str8fmt_write(fd, arena, STR8_LIT("%-15s: %-10u cycles | Hits %-8u | %.2f%%\n"), b->name, b->tsc_elapsed, b->hit_count, percent);
+				f64 inc_percent = ((f64)b->tsc_inclusive / (f64)total_cpu_elapsed) * 100.0;
+				f64 exc_percent = ((f64)b->tsc_exclusive / (f64)total_cpu_elapsed) * 100.0;
+				str8fmt_write(fd, arena, STR8_LIT("%-15s: %-10u cyc [%5.2f%%]| Exc: [%5.2f%%] | Hits %-8u\n"),
+			    b->name,
+				b->tsc_inclusive, inc_percent,
+			    exc_percent,
+				b->hit_count);
 			}
 			i += 1;
 		}
