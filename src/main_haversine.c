@@ -1,31 +1,29 @@
 #include "base/base_inc.h"
-#include "base/base_profiler.h"
+#include "base/base_string.h"
 #include "parser/parser_inc.h"
 #include "generator/generator_inc.h"
 
 #include "base/base_inc.c"
 #include "parser/parser_inc.c"
 #include "generator/generator_inc.c"
+#include <unistd.h>
 
-#define PROGRAM_NAME_HAVERSINE "haversine"
-
-void print_usage(void)
+void print_usage(Arena *arena)
 {
-    fprintf(stdout,"Usage: ./%s <filename.json>\n", PROGRAM_NAME_HAVERSINE);
+    str8fmt_write(STDOUT_FILENO, arena,STR8_LIT("Usage: ./haversine <filename.json>\n"));
 }
 
 int main(int argc, char **argv)
 {
+	profiler_init();
+	PROFILER_BLOCK_BEGIN(startup);
+
 	Arena *life_arena = arena_alloc(KIBIBYTE(1));
 	if (!life_arena) return 0;
 
-	profiler_init();
-
-	PROFILER_BLOCK_BEGIN(startup);
-
 	if (argc != 2)
 	{
-		print_usage();
+		print_usage(life_arena);
 		return 0;
 	}
 
@@ -71,7 +69,7 @@ int main(int argc, char **argv)
 	PROFILER_BLOCK_BEGIN(parse);
 
 	f64_array arr = json_parse_to_buffer(arena, json);
-	assert((arr.count & 0x3) == 0);  // Exit the program if count is not divisible by 4, since 4 floats form 2 pairs
+	assert((arr.count & 0x3) == 0);  // Exit the program if count is not divisible by 4, since 4 floats form 1 pair
 
 	PROFILER_BLOCK_END(parse);
 

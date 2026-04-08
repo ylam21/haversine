@@ -4,7 +4,8 @@
 *.json
 *.f64
 
-# filenames of binaries 
+# filenames of binaries
+a.out
 generate_json
 parse_json
 haversine
