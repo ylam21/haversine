@@ -1,8 +1,9 @@
 .vscode
-
+.gdb_history
 *.d
 *.json
 *.f64
+.cache
 
 # filenames of binaries
 a.out
