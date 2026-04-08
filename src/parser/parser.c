@@ -71,7 +71,7 @@ u64 parse_point_from_json_to_buffer(Arena *arena, f64_array *arr, String8 point,
 	u8 *ptr = locate_str8_in_str8(data, point);
 	if (ptr)
 	{
-		u64 offset = point.size + 2;
+		u64 offset = point.size + 3; // fixed calcution to the float since point is just single char
 		if (offset > data.size) return 0;
 
 		char *endptr;
@@ -106,19 +106,19 @@ f64_array json_parse_to_buffer(Arena *arena, String8 json)
 	u64 consumed = 0;
 	while (json.size > 0)
 	{
-		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("x0"), json, &acc);
+		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("x"), json, &acc);
 		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;
-		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("y0"), json, &acc);
+		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("y"), json, &acc);
 		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;
-		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("x1"), json, &acc);
+		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("x"), json, &acc);
 		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;
-		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("y1"), json, &acc);
+		consumed = parse_point_from_json_to_buffer(arena, &arr, STR8_LIT("y"), json, &acc);
 		if (consumed == 0) break;
 		json.str += consumed;
 		json.size -= consumed;

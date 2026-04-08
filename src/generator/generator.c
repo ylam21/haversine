@@ -85,8 +85,9 @@ void generate_and_write_data(s32 fd, s32 fd_ans, u64 seed, u64 n_pairs, u8 flag)
 	f64 acc = 0;
 
 	Arena arena = {0};
-	u8 buf[KB(1)];
-	arena_init(&arena, buf, KB(1));
+	u64 buffer_size = KIBIBYTE(1);
+	u8 buffer[buffer_size];
+	arena_init(&arena, buffer, buffer_size);
 	
 	ranctx ctx = {0};
 	raninit(&ctx, seed);

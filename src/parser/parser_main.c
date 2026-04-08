@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	u64 buffer_size = GB(1);
+	u64 buffer_size = GIBIBYTE(1);
 	u8 *buffer = (u8 *)malloc(buffer_size);
 	if (buffer == NULL)
 	{

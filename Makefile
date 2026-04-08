@@ -20,25 +20,25 @@ $(NAME_GEN): $(SRC_GEN)
 	$(CC) $(CFLAGS) $< -o $@ -lm
 
 $(NAME_GEN)_debug: $(SRC_GEN)
-	$(CC) $(CFLAGS) $(DBG_FLAGS) $< -o $@
+	$(CC) $(CFLAGS) $(DBG_FLAGS) $< -o $@ -lm
 
 $(NAME_PARSER): $(SRC_PARSER)
 	$(CC) $(CFLAGS) $< -o $@ -lm
 
 $(NAME_PARSER)_debug: $(SRC_PARSER)
-	$(CC) $(CFLAGS) $(DBG_FLAGS) $< -o $@
+	$(CC) $(CFLAGS) $(DBG_FLAGS) $< -o $@ -lm
 
 $(NAME_TIMER): $(SRC_TIMER)
 	$(CC) $(CFLAGS) $< -o $@ -lm
 
 $(NAME_TIMER)_debug: $(SRC_TIMER)
-	$(CC) $(CFLAGS) $(DBG_FLAGS) $< -o $@
+	$(CC) $(CFLAGS) $(DBG_FLAGS) $< -o $@ -lm
 
 $(NAME_HAVER): $(SRC_HAVER)
 	$(CC) $(CFLAGS) $< -o $@ -lm
 
 $(NAME_HAVER)_debug: $(SRC_HAVER)
-	$(CC) $(CFLAGS) $(DBG_FLAGS) $< -o $@
+	$(CC) $(CFLAGS) $(DBG_FLAGS) $< -o $@ -lm
 
 -include $(NAME_GEN).d
 -include $(NAME_PARSER).d

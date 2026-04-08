@@ -10,11 +10,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <assert.h>
 
-#define KB(n)  (((u64)(n)) << 10)
-#define MB(n)  (((u64)(n)) << 20)
-#define GB(n)  (((u64)(n)) << 30)
-#define TB(n)  (((u64)(n)) << 40)
+#define KIBIBYTE(n)  (((u64)(n)) << 10)
+#define MEBIBYTE(n)  (((u64)(n)) << 20)
+#define GIBIBYTE(n)  (((u64)(n)) << 30)
+#define TEBIBYTE(n)  (((u64)(n)) << 40)
 #define Thousand(n)   ((n)*1000)
 #define Million(n)    ((n)*1000000)
 #define Billion(n)    ((n)*1000000000)

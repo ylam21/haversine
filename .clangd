@@ -1,0 +1,10 @@
+CompileFlags:
+  Add:
+    - "-include"
+    - "src/base/base_inc.h"
+    - "-include"
+    - "src/generator/generator_inc.h"
+    - "-include"
+    - "src/parser/parser_inc.h"
+    - "-include"
+    - "src/timer/timer_inc.h"

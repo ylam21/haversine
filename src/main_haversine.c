@@ -1,4 +1,5 @@
 #include "base/base_inc.h"
+#include "base/base_profiler.h"
 #include "parser/parser_inc.h"
 #include "timer/timer_inc.h"
 #include "generator/generator_inc.h"
@@ -17,11 +18,12 @@ void print_usage(void)
 
 int main(int argc, char **argv)
 {
-	cpu_freq cf;
-	cpu_freq_start(&cf);
+	Arena *life_arena = arena_alloc(KIBIBYTE(1));
+	if (!life_arena) return 0;
 
-	// TIMESTAMP: STARTUP START
-	u64 cfts_startup_start = __rdtsc();
+	profiler_init();
+
+	u64 block_idx = profiler_block_begin(STR8_LIT("startup"));
 
 	if (argc != 2)
 	{
@@ -35,27 +37,25 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Error: cannot open %s\n", argv[1]);
 		return 1;
 	}
-	
-	u64 buffer_size = GB(1);
+
+	u64 buffer_size = GIBIBYTE(1);
 	u8 *buffer = (u8 *)malloc(buffer_size);
 	if (buffer == NULL)
 	{
 		perror("malloc");
 		return 1;
 	}
-	u64 cfts_startup_end = __rdtsc();
-	// TIMESTAMP: STARTUP END
 
-	// TIMESTAMP: READ START
-	u64 cfts_read_start = __rdtsc();
+	profiler_block_end(block_idx);
+
+	block_idx = profiler_block_begin(STR8_LIT("read"));
 
 	s32 read_bytes = read(fd, buffer, buffer_size);
+	if (read_bytes == -1) return 0;
 
-	u64 cfts_read_end = __rdtsc();
-	// TIMESTAMP: READ END 
+	profiler_block_end(block_idx);
 
-	// TIMESTAMP: MISC SETUP START 
-	u64 cfts_misc_setup_start = __rdtsc();
+	block_idx = profiler_block_begin(STR8_LIT("misc"));
 
 	if (read_bytes == -1)
 	{
@@ -64,25 +64,22 @@ int main(int argc, char **argv)
 	}
 
 	String8 json = (String8){.str = buffer, .size = (u64)read_bytes};
-	Arena *arena = arena_alloc(GB(1));
+	Arena *arena = arena_alloc(GIBIBYTE(1));
 	if (arena == 0)
 	{
 		return 1;
 	}
 
-	u64 cfts_misc_setup_end = __rdtsc();
-	// TIMESTAMP: MISC SETUP END
+	profiler_block_end(block_idx);
 
-	// TIMESTAMP: PARSE START
-	u64 cfts_parse_start = __rdtsc();
+	block_idx = profiler_block_begin(STR8_LIT("parse"));
 
 	f64_array arr = json_parse_to_buffer(arena, json);
+	assert((arr.count & 0x1F) == 0);  // Exit the program if count is not divisible by 32 (32 bytes = 1 pair; f64 * 4)
 
-	u64 cfts_parse_end = __rdtsc();
-	// TIMESTAMP: PARSE END
+	profiler_block_end(block_idx);
 
-	// TIMESTAMP: SUM START 
-	u64 cfts_sum_start = __rdtsc();
+	block_idx = profiler_block_begin(STR8_LIT("sum"));
 
 	f64 x0, y0, x1, y1;
 
@@ -98,6 +95,8 @@ int main(int argc, char **argv)
 		y0 = arr.arr[1];
 		x1 = arr.arr[2];
 		y1 = arr.arr[3];
+		// Note: What if I would be accessing 8 floats at one loop-cycle?
+		// Would this increase performance? Since size of one cache line is 64 bytes...
 
 		haversine_distance = ReferenceHaversine(x0, y0, x1, y1, 6372.8);
 		sum += sum_coef * haversine_distance;
@@ -106,30 +105,8 @@ int main(int argc, char **argv)
 		count += 4;
 	}
 
-	u64 cfts_sum_end = __rdtsc();
-	// TIMESTAMP: SUM END 
-
-
-	cpu_freq_end(&cf);
-	u64 cpu_freq = cpu_freq_get(&cf);
-
-	u64 startup_freq = cpu_freq_from_ts(&cf, cfts_startup_start, cfts_startup_end);
-	u64 read_freq = cpu_freq_from_ts(&cf, cfts_read_start, cfts_read_end);
-	u64 misc_setup_freq = cpu_freq_from_ts(&cf, cfts_misc_setup_start, cfts_misc_setup_end);
-	u64 parse_freq = cpu_freq_from_ts(&cf, cfts_parse_start, cfts_parse_end);
-	u64 sum_freq = cpu_freq_from_ts(&cf, cfts_sum_start, cfts_sum_end);
-
-
-	printf("Input size: %u\n", read_bytes);
-	printf("Pair count: %lu\n", n_pairs);
-	printf("Haversine sum: %.16f\n\n", sum);
-
-	printf("Total time: %lu (CPU freq: %lu)\n", cf.os_time_start - cf.os_time_end, cpu_freq);
-	printf(" Startup: %lu (%.2f%%)\n", startup_freq, (f64)startup_freq / (f64)cpu_freq * 100);
-	printf(" Read: %lu (%.2f%%)\n", read_freq, (f64)read_freq / (f64)cpu_freq * 100);
-	printf(" MiscSetup: %lu (%.2f%%)\n", misc_setup_freq, (f64)misc_setup_freq / (f64)cpu_freq * 100);
-	printf(" Parse: %lu (%.2f%%)\n", parse_freq, (f64)parse_freq / (f64)cpu_freq * 100);
-	printf(" Sum: %lu (%.2f%%)\n", sum_freq, (f64)sum_freq / (f64)cpu_freq * 100);
+	profiler_block_end(block_idx);
+	profiler_end_and_dump();
 
 	return 0;
 }
