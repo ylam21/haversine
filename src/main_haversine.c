@@ -1,19 +1,16 @@
 #include "base/base_inc.h"
-#include "base/base_profiler.h"
 #include "parser/parser_inc.h"
-#include "timer/timer_inc.h"
 #include "generator/generator_inc.h"
 
 #include "base/base_inc.c"
 #include "parser/parser_inc.c"
-#include "timer/timer_inc.c"
 #include "generator/generator_inc.c"
 
 #define PROGRAM_NAME_HAVERSINE "haversine"
 
 void print_usage(void)
 {
-	fprintf(stdout,"Usage: ./%s <filename.json>\n", PROGRAM_NAME_HAVERSINE);
+    fprintf(stdout,"Usage: ./%s <filename.json>\n", PROGRAM_NAME_HAVERSINE);
 }
 
 int main(int argc, char **argv)
@@ -23,7 +20,7 @@ int main(int argc, char **argv)
 
 	profiler_init();
 
-	u64 block_idx = profiler_block_begin(STR8_LIT("startup"));
+	PROFILER_BEGIN(startup);
 
 	if (argc != 2)
 	{
@@ -46,16 +43,16 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	profiler_block_end(block_idx);
+    PROFILER_END(startup);
 
-	block_idx = profiler_block_begin(STR8_LIT("read"));
+    PROFILER_BEGIN(read);
 
 	s32 read_bytes = read(fd, buffer, buffer_size);
 	if (read_bytes == -1) return 0;
 
-	profiler_block_end(block_idx);
+	PROFILER_END(read);
 
-	block_idx = profiler_block_begin(STR8_LIT("misc"));
+	PROFILER_BEGIN(misc);
 
 	if (read_bytes == -1)
 	{
@@ -70,16 +67,16 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	profiler_block_end(block_idx);
+	PROFILER_END(misc);
 
-	block_idx = profiler_block_begin(STR8_LIT("parse"));
+	PROFILER_BEGIN(parse);
 
 	f64_array arr = json_parse_to_buffer(arena, json);
-	assert((arr.count & 0x1F) == 0);  // Exit the program if count is not divisible by 32 (32 bytes = 1 pair; f64 * 4)
+	assert((arr.count & 0x3) == 0);  // Exit the program if count is not divisible by 4, since 4 floats form 2 pairs
 
-	profiler_block_end(block_idx);
+	PROFILER_END(parse);
 
-	block_idx = profiler_block_begin(STR8_LIT("sum"));
+	PROFILER_BEGIN(sum);
 
 	f64 x0, y0, x1, y1;
 
@@ -105,8 +102,8 @@ int main(int argc, char **argv)
 		count += 4;
 	}
 
-	profiler_block_end(block_idx);
-	profiler_end_and_dump();
+	PROFILER_END(sum);
+	profiler_end_and_dump(arena, STDOUT_FILENO);
 
 	return 0;
 }

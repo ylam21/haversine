@@ -6,5 +6,3 @@ CompileFlags:
     - "src/generator/generator_inc.h"
     - "-include"
     - "src/parser/parser_inc.h"
-    - "-include"
-    - "src/timer/timer_inc.h"
