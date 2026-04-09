@@ -12,6 +12,7 @@ enum generatorTypeFlag
 	typeCluster = 0x2,
 };
 
+// (https://burtleburtle.net/bob/rand/smallprng.html)
 typedef struct ranctx
 {
 	u64 a;
