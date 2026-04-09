@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////
-// COPIED FROM examples
+// COPIED FROM examples (https://github.com/cmuratori/computer_enhance)
 f64 Square(f64 A)
 {
     f64 Result = (A*A);

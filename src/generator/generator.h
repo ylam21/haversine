@@ -6,6 +6,12 @@
 
 #define rot(x, k) (((x) << (k)) | ((x) >> (64 - (k))))
 
+enum generatorTypeFlag
+{
+	typeUniform = 0x1,
+	typeCluster = 0x2,
+};
+
 typedef struct ranctx
 {
 	u64 a;

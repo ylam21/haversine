@@ -8,6 +8,8 @@
 # filenames of binaries
 a.out
 generate_json
-parse_json
+generate_json_debug
+generate_json_prof
 haversine
-timer
+haversine_debug
+haversine_prof

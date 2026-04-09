@@ -33,11 +33,4 @@ typedef int64_t s64;
 typedef float f32;
 typedef double f64;
 
-
-enum generatorTypeFlag
-{
-	typeUniform = 0x1,
-	typeCluster = 0x2,
-};
-
 #endif

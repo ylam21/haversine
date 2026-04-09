@@ -1,8 +1,10 @@
 #include "base/base_inc.h"
+#include "base/base_profiler.h"
 #include "parser/parser_inc.h"
 #include "generator/generator_inc.h"
 
 #include "base/base_inc.c"
+#include "base/base_profiler.c"
 #include "parser/parser_inc.c"
 #include "generator/generator_inc.c"
 
@@ -39,7 +41,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	u64 buffer_size = GIBIBYTE(1);
+	u64 buffer_size = GIBIBYTE(2);
 	u8 *buffer = (u8 *)malloc(buffer_size);
 	if (buffer == NULL)
 	{
@@ -55,6 +57,7 @@ int main(int argc, char **argv)
 	if (read_bytes == -1)
 	{
 		fprintf(stderr, "Error: cannot read %s\n", argv[1]);
+		fprintf(stderr, "Hint:  Probably the size of %s exceeds 2 gibibytes\n", argv[1]);
 		return 1;
 	}
 
