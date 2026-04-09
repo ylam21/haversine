@@ -45,7 +45,7 @@ void profiler_end_and_print(Arena *arena, s32 fd)
 				if (inc_percent == exc_percent)
 				{
 				    // Note: This block does not have any nested/children blocks
-					str8fmt_write(fd, arena, STR8_LIT("%-20s: %-10u cycles [%5.2f%%] | %-19s | Hits %-8u\n"),
+					str8fmt_write(fd, arena, STR8_LIT("%-20s: %-12u cycles [%5.2f%%] | %-19s | Hits %-8u\n"),
 					b->name,
 					b->tsc_inclusive, inc_percent,
 					STR8_LIT("No children blocks"),
@@ -53,7 +53,7 @@ void profiler_end_and_print(Arena *arena, s32 fd)
 				}
 				else
 				{
-				    str8fmt_write(fd, arena, STR8_LIT("%-20s: %-10u cycles [%5.2f%%] | Exclusive: [%5.2f%%] | Hits %-8u\n"),
+				    str8fmt_write(fd, arena, STR8_LIT("%-20s: %-12u cycles [%5.2f%%] | Exclusive: [%5.2f%%] | Hits %-8u\n"),
 			        b->name,
 				    b->tsc_inclusive, inc_percent,
 			        exc_percent,

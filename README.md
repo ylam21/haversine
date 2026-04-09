@@ -73,15 +73,15 @@ Haversine sum: 1765.20
 -------------------------
 
 --- PROFILING RESULTS ---
-Total time: 5986 milliseconds (CPU freq: 3193959383)
-parse_locate_str    : 2891027309 cycles [15.12%] | No children blocks  | Hits 40000001
-parse_strtod_conv   : 7095438006 cycles [37.11%] | No children blocks  | Hits 40000000
-parse_arena_push    : 1427178701 cycles [ 7.46%] | No children blocks  | Hits 40000000
-startup             : 98496      cycles [ 0.00%] | No children blocks  | Hits 1
-read                : 2136130080 cycles [11.17%] | No children blocks  | Hits 1
-misc                : 106336     cycles [ 0.00%] | No children blocks  | Hits 1
-parse               : 14905330816 cycles [77.95%] | Exclusive: [18.26%] | Hits 1
-sum                 : 2078944896 cycles [10.87%] | No children blocks  | Hits 1
+Total time: 5684 milliseconds (CPU freq: 3193957303)
+parse_locate_str    : 2884627733   cycles [15.89%] | No children blocks  | Hits 40000001
+parse_strtod_conv   : 7000455863   cycles [38.55%] | No children blocks  | Hits 40000000
+parse_arena_push    : 1391776175   cycles [ 7.66%] | No children blocks  | Hits 40000000
+startup             : 105888       cycles [ 0.00%] | No children blocks  | Hits 1
+read                : 1315932512   cycles [ 7.25%] | No children blocks  | Hits 1
+misc                : 75360        cycles [ 0.00%] | No children blocks  | Hits 1
+parse               : 14748152960  cycles [81.22%] | Exclusive: [19.12%] | Hits 1
+sum                 : 2093291008   cycles [11.53%] | No children blocks  | Hits 1
 -------------------------
 ```
 As you can see the profiler has some overhead, in this case it adds ~1.3 seconds of runtime for 10 million pairs.
