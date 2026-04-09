@@ -22,7 +22,7 @@ u8 *locate_str8_in_str8(String8 src, String8 target)
 
 u64 parse_point_from_json_to_buffer(Arena *arena, f64_array *arr, String8 point, String8 data)
 {
-    PROFILER_BLOCK_BEGIN(parse_locate_str);
+    PROFILER_BLOCK_BEGIN(parse_locate_str, 0);
 	u8 *ptr = locate_str8_in_str8(data, point);
 	PROFILER_BLOCK_END(parse_locate_str);
 	if (ptr)
@@ -30,12 +30,12 @@ u64 parse_point_from_json_to_buffer(Arena *arena, f64_array *arr, String8 point,
 		u64 offset = point.size + 3; // fixed calcution to the float since point is just single char
 		if (offset > data.size) return 0;
 
-		PROFILER_BLOCK_BEGIN(parse_strtod_conv);
+		PROFILER_BLOCK_BEGIN(parse_strtod_conv, 0);
 		char *endptr;
 		f64 val = strtod((char *)(ptr + offset), &endptr);
 		PROFILER_BLOCK_END(parse_strtod_conv);
 
-		PROFILER_BLOCK_BEGIN(parse_arena_push);
+		PROFILER_BLOCK_BEGIN(parse_arena_push, 0);
 		f64 *dest = arena_push_packed(arena, sizeof(f64));
 		if (dest)
 		{
