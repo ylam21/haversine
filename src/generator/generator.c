@@ -51,6 +51,7 @@ u64 ranval(ranctx *x)
 	return x->d;
 }
 
+// (https://burtleburtle.net/bob/rand/smallprng.html)
 void raninit(ranctx *x, u64 seed)
 {
 	x->a = 0xf1ea5eed;
