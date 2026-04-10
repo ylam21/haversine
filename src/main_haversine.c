@@ -23,7 +23,7 @@ void print_usage(Arena *arena)
 int main(int argc, char **argv)
 {
 	profiler_init();
-	PROFILER_BLOCK_BEGIN(startup, 0);
+	PROFILER_BLOCK_BEGIN(startup);
 
 	Arena *life_arena = arena_alloc(KIBIBYTE(1));
 	if (!life_arena) return 0;
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
     PROFILER_BLOCK_END(startup);
 
-    PROFILER_BLOCK_BEGIN(read, 0);
+    PROFILER_BLOCK_BEGIN(read);
 
 	s32 read_bytes = read(fd, buffer, buffer_size);
 	if (read_bytes == -1)
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 
 	PROFILER_BLOCK_END(read);
 
-	PROFILER_BLOCK_BEGIN(misc, 0);
+	PROFILER_BLOCK_BEGIN(misc);
 
 	String8 json = (String8){.str = buffer, .size = (u64)read_bytes};
 	Arena *arena = arena_alloc(GIBIBYTE(1));
@@ -74,14 +74,14 @@ int main(int argc, char **argv)
 
 	PROFILER_BLOCK_END(misc);
 
-	PROFILER_BLOCK_BEGIN(parse, json.size);
+	PROFILER_BLOCK_TPUT_BEGIN(parse, json.size);
 
 	f64_array arr = json_parse_to_buffer(arena, json);
 	assert((arr.count & 0x3) == 0);  // Exit the program if count is not divisible by 4, since 4 floats form 1 pair
 
 	PROFILER_BLOCK_END(parse);
 
-	PROFILER_BLOCK_BEGIN(sum, arr.count * sizeof(f64));
+	PROFILER_BLOCK_TPUT_BEGIN(sum, arr.count * sizeof(f64));
 
 	f64 x0, y0, x1, y1;
 
