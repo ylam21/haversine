@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 
 	PROFILER_BLOCK_END(parse);
 
-	PROFILER_BLOCK_BEGIN(sum, 0);
+	PROFILER_BLOCK_BEGIN(sum, arr.count * sizeof(f64));
 
 	f64 x0, y0, x1, y1;
 

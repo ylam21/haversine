@@ -71,7 +71,8 @@ extern profiler g_profiler;
 	g_profiler_blocks[prof_loc_##id_name].hit_count += 1
 #else
 
-#define PROFILER_BLOCK_BEGIN(id_name, byte_count)
+#define PROFILER_BLOCK_TPUT_BEGIN(id_name, byte_count) // 'TPUT' stands for throughput
+#define PROFILER_BLOCK_BEGIN(id_name) PROFILER_BLOCK_TPUT_BEGIN(id_name, 0)
 #define PROFILER_BLOCK_END(id_name)
 
 #endif

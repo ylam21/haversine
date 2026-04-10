@@ -48,7 +48,7 @@ void profiler_end_and_print(Arena *arena, s32 fd)
 				{
 				    f64 seconds = (f64)b->tsc_inclusive / (f64)cpu_freq;
 					f64 bytes_per_sec = b->processed_byte_count / seconds;
-					gib_per_sec = bytes_per_sec / (1024.0 * 1024.0 * 1024.0);
+					gib_per_sec = (f64)bytes_per_sec / (f64)GIBIBYTE(1);
 				}
 				if (inc_percent == exc_percent)
 				{
@@ -69,7 +69,8 @@ void profiler_end_and_print(Arena *arena, s32 fd)
 				}
 				if (b->processed_byte_count > 0)
 				{
-				    str8fmt_write(fd, arena, STR8_LIT(" | %5.2f GiB/s\n"), gib_per_sec);
+				    f64 mib_count = (f64)b->processed_byte_count / (f64)MEBIBYTE(1);
+					str8fmt_write(fd, arena, STR8_LIT(" | %5.3f MiB at %5.3f GiB/s\n"), mib_count, gib_per_sec);
 				}
 				else
 				{
