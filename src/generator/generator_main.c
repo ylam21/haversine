@@ -1,8 +1,4 @@
-#include "../base/base_inc.h"
-#include "generator_inc.h"
-
-#include "../base/base_inc.c"
-#include "generator_inc.c"
+#include "../root.unity.h"
 
 #define PROGRAM_NAME_GEN "haversine_generator"
 

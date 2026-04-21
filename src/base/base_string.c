@@ -1,3 +1,6 @@
+#pragma once
+#include "../root.unity.h"
+
 u32 str8ncmp(String8 s1, String8 s2, u32 n)
 {
     u32 i = 0;

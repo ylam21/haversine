@@ -1,12 +1,4 @@
-#include "base/base_inc.h"
-#include "base/base_profiler.h"
-#include "parser/parser_inc.h"
-#include "generator/generator_inc.h"
-
-#include "base/base_inc.c"
-#include "base/base_profiler.c"
-#include "parser/parser_inc.c"
-#include "generator/generator_inc.c"
+#include "root.unity.h"
 
 void print_result_stats(Arena *arena, u64 read_bytes, u64 n_pairs, f64 sum)
 {
@@ -51,7 +43,10 @@ int main(int argc, char **argv)
 
     PROFILER_BLOCK_END(startup);
 
-    PROFILER_BLOCK_BEGIN(read);
+
+    u64 filesize = os_file_size(argv[1]);
+    PROFILER_BLOCK_TPUT_BEGIN(read, filesize);
+    (void)filesize;
 
 	s32 read_bytes = read(fd, buffer, buffer_size);
 	if (read_bytes == -1)
@@ -106,10 +101,10 @@ int main(int argc, char **argv)
 		arr.arr += 4;
 		count += 4;
 	}
+	PROFILER_BLOCK_END(sum);
 
 	print_result_stats(life_arena, read_bytes, n_pairs, sum);
 
-	PROFILER_BLOCK_END(sum);
 	profiler_end_and_print(arena, STDOUT_FILENO);
 
 	return 0;

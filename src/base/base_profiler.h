@@ -8,7 +8,6 @@
 #define ENABLE_PROFILER 0
 #endif
 
-#define OS_TIMER_FREQUENCY ((u64)1000000)
 
 #if ENABLE_PROFILER
 #define PROFILER_MAX_BLOCK_COUNT ((u64)4096)
@@ -41,7 +40,7 @@ struct profiler
 
 void profiler_init(void);
 void profiler_end_and_print(Arena *arena, s32 fd);
-u64 get_os_timestamp_t(void);
+
 
 extern profiler g_profiler;
 

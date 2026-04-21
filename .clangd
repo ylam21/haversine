@@ -1,8 +1,7 @@
 CompileFlags:
   Add:
-    - "-include"
-    - "src/base/base_inc.h"
-    - "-include"
-    - "src/generator/generator_inc.h"
-    - "-include"
-    - "src/parser/parser_inc.h"
+    - "-Wno-pragma-once-outside-header"
+    - "-Wno-unused-function"
+
+Diagnostics:
+  UnusedIncludes: None

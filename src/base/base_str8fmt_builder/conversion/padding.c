@@ -1,3 +1,6 @@
+#pragma once
+#include "../../../root.unity.h"
+
 void apply_padding(Arena *arena, String8 s, t_fmt_opt *opt)
 {
     if (s.size >= (u64)opt->width)
@@ -9,12 +12,12 @@ void apply_padding(Arena *arena, String8 s, t_fmt_opt *opt)
     }
 
     s32 total_padding = opt->width - s.size;
-    
-    u8 *padded = arena_push_packed(arena, opt->width); 
+
+    u8 *padded = arena_push_packed(arena, opt->width);
     if (!padded) return;
 
     if (opt->left_align)
-    {   
+    {
         /* <TEXT;SPACES> */
         memcpy(padded, s.str, s.size);
         memset(padded + s.size, CHAR_SPACE, total_padding);

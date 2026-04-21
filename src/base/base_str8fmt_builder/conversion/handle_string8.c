@@ -1,3 +1,6 @@
+#pragma once
+#include "../../../root.unity.h"
+
 void handle_string8(Arena *arena, va_list args, t_fmt_opt *opt)
 {
     String8 s = va_arg(args, String8);

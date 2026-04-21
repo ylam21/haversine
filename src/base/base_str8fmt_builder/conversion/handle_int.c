@@ -1,8 +1,11 @@
+#pragma once
+#include "../../../root.unity.h"
+
 s32 my_stoa_buf(u8 *buf, s32 x)
 {
     s32 i = 0;
     s64 nb = x;
-    
+
     if (nb == 0)
     {
         buf[0] = '0';
@@ -20,22 +23,22 @@ s32 my_stoa_buf(u8 *buf, s32 x)
     }
 
     if (x < 0) buf[i++] = '-';
-    
+
     while (temp_len > 0)
     {
         buf[i++] = temp[--temp_len];
     }
-    
+
     return i;
 }
 
 void handle_int(Arena *arena, va_list args, t_fmt_opt *opt)
 {
     s32 val = va_arg(args, s32);
-    u8 buffer[32] = {0}; 
+    u8 buffer[32] = {0};
 
     s32 len = my_stoa_buf(buffer, val);
-    
+
     String8 s;
     s.str = buffer;
     s.size = len;

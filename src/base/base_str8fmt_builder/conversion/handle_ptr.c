@@ -1,9 +1,12 @@
+#pragma once
+#include "../../../root.unity.h"
+
 void handle_hex_ptr(Arena *arena, va_list args, t_fmt_opt *opt, u8 table[16])
 {
     void *ptr = va_arg(args, void *);
     u64 val = (u64)ptr;
-    
-    u8 buffer[32]; 
+
+    u8 buffer[32];
     u64 len = 0;
 
     if (ptr == NULL)
@@ -21,7 +24,7 @@ void handle_hex_ptr(Arena *arena, va_list args, t_fmt_opt *opt, u8 table[16])
 
         u8 temp[20];
         s32 temp_idx = 0;
-        
+
         while (val)
         {
             temp[temp_idx++] = table[val & 0xF];

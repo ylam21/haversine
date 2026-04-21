@@ -1,3 +1,6 @@
+#pragma once
+#include "../root.unity.h"
+
 profiler g_profiler = {0};
 
 #if ENABLE_PROFILER
@@ -5,22 +8,15 @@ profiler_block g_profiler_blocks[PROFILER_MAX_BLOCK_COUNT] = {0};
 u32 g_profiler_current_parent = PROFILER_NULL_PARENT;
 #endif
 
-u64 get_os_timestamp(void)
-{
-	struct timeval val;
-	gettimeofday(&val, 0);
-	return (OS_TIMER_FREQUENCY * (u64)val.tv_sec) + (u64)val.tv_usec;
-}
-
 void profiler_init(void)
 {
-	g_profiler.os_time_start = get_os_timestamp();
+	g_profiler.os_time_start = os_get_timestamp();
 	g_profiler.profiler_tsc_start = __rdtsc();
 }
 
 void profiler_end_and_print(Arena *arena, s32 fd)
 {
-	g_profiler.os_time_end = get_os_timestamp();
+	g_profiler.os_time_end = os_get_timestamp();
 	g_profiler.profiler_tsc_end = __rdtsc();
 
 	u64 os_time_elapsed = g_profiler.os_time_end - g_profiler.os_time_start;

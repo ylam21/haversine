@@ -1,3 +1,6 @@
+#pragma once
+#include "../../root.unity.h"
+
 #include "specifier_table.c"
 
 t_fmt_opt parse_options(String8 fmt, u64 *pos)
@@ -40,8 +43,8 @@ t_fmt_opt parse_options(String8 fmt, u64 *pos)
     return opt;
 }
 
-String8 str8fmt_builder(Arena *arena, String8 fmt, va_list args) 
-{ 
+String8 str8fmt_builder(Arena *arena, String8 fmt, va_list args)
+{
     u8 *start_ptr = (u8 *)arena->buffer + arena->pos;
     // NOTE:  Everything allocated onto the arena from this point up to the string size
     //        is going to be included in the returned string!

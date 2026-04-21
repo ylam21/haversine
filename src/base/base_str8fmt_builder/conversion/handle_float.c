@@ -1,3 +1,6 @@
+#pragma once
+#include "../../../root.unity.h"
+
 u8 my_ftoa_buf(u8 *buffer, f64 val, t_fmt_opt *opt)
 {
     u8 i = 0;
@@ -11,7 +14,7 @@ u8 my_ftoa_buf(u8 *buffer, f64 val, t_fmt_opt *opt)
 
     u64 whole = (u64)val;
     f64 fraction = val - (f64)whole;
-    i += my_u64toa_buf(buffer + i, whole); 
+    i += my_u64toa_buf(buffer + i, whole);
 
     if (precision > 0) {
         buffer[i++] = '.';

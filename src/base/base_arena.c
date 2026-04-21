@@ -1,3 +1,6 @@
+#pragma once
+#include "../root.unity.h"
+
 Arena *arena_alloc(u64 size)
 {
     Arena *arena;
@@ -58,7 +61,7 @@ void *arena_push_packed(Arena *arena, u64 size)
     if (arena->pos + size <= arena->cap)
     {
         void *ptr = (u8*)arena->buffer + arena->pos;
-        arena->pos += size; 
+        arena->pos += size;
         memset(ptr, 0, size);
         return ptr;
     }

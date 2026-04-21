@@ -21,6 +21,7 @@
 #define Billion(n)    ((n)*1000000000)
 
 #define CHAR_SPACE ' '
+#define ArrayCount(arr) (sizeof(arr)/sizeof(arr[0]))
 
 typedef uint8_t u8;
 typedef uint16_t u16;

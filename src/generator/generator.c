@@ -1,3 +1,5 @@
+#pragma once
+#include "../root.unity.h"
 ////////////////////////////////////////////////////////////
 // COPIED FROM examples (https://github.com/cmuratori/computer_enhance)
 f64 Square(f64 A)

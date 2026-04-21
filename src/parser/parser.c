@@ -1,3 +1,6 @@
+#pragma once
+#include "../root.unity.h"
+
 u8 *locate_str8_in_str8(String8 src, String8 target)
 {
 	if (target.size == 0)
