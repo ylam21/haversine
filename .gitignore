@@ -13,3 +13,4 @@ generate_json_prof
 haversine
 haversine_debug
 haversine_prof
+reptest

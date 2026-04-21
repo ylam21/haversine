@@ -77,6 +77,7 @@ void new_test_wave(Arena *arena, RepetitionTester *tester, u64 target_byte_count
 void begin_time(RepetitionTester *tester);
 void end_time(RepetitionTester *tester);
 void read_via_read(Arena *arena, RepetitionTester *tester, ReadParams *params);
+void read_via_fread(Arena *arena, RepetitionTester *tester, ReadParams *params);
 void print_single_result(Arena *arena, String8 label, f64 cpu_time, u64 cpu_timer_freq, u64 byte_count);
 void print_results(Arena *arena, RepetitionTestResults results, u64 cpu_timer_freq, u64 byte_count);
 f64 seconds_from_cpu_time(f64 cpu_time, u64 cpu_timer_freq);
@@ -110,6 +111,7 @@ f64 seconds_from_cpu_time(f64 cpu_time, u64 cpu_timer_freq)
 
 void print_single_result(Arena *arena, String8 label, f64 cpu_time, u64 cpu_timer_freq, u64 byte_count)
 {
+    Temp temp = temp_begin(arena);
     str8fmt_write(STDOUT_FILENO, arena, STR8_LIT("%s: %.0f"), label, cpu_time);
     if (cpu_timer_freq)
     {
@@ -122,6 +124,34 @@ void print_single_result(Arena *arena, String8 label, f64 cpu_time, u64 cpu_time
             str8fmt_write(STDOUT_FILENO, arena, STR8_LIT(" %fgb/s\n"), best_bandwidth);
         }
     }
+    temp_end(temp);
+}
+
+void read_via_fread(Arena *arena, RepetitionTester *tester, ReadParams *params)
+{
+    while (is_testing(arena, tester))
+    {
+        FILE *file = fopen(params->filepath, "r");
+        if (!file)
+        {
+            error(arena, tester, STR8_LIT("fread failed 1"));
+            break;
+        }
+
+        begin_time(tester);
+        u64 read_bytes = fread(params->filedata.str, 1, params->filedata.size, file);
+        end_time(tester);
+
+        if (read_bytes != params->filedata.size)
+        {
+            error(arena, tester, STR8_LIT("fread failed 2"));
+            break;
+
+        }
+        count_bytes(tester, params->filedata.size);
+
+        fclose(file);
+    }
 }
 
 void read_via_read(Arena *arena, RepetitionTester *tester, ReadParams *params)
@@ -132,6 +162,7 @@ void read_via_read(Arena *arena, RepetitionTester *tester, ReadParams *params)
         if (fd == -1)
         {
             error(arena, tester, STR8_LIT("read failed 1"));
+            break;
         }
 
         begin_time(tester);
@@ -233,6 +264,11 @@ void new_test_wave(Arena *arena, RepetitionTester *tester, u64 target_byte_count
         {
             error(arena, tester, STR8_LIT("cpu_timer_frequency changed"));
         }
+
+        tester->results.test_count = 0;
+        tester->results.total = 0;
+        tester->results.max = 0;
+        tester->results.min = UINT64_MAX;
     }
 
     tester->try_for_time = seconds_to_try * cpu_timer_freq;
@@ -262,12 +298,13 @@ int main(int argc, char **argv)
     char *file_name = argv[1];
 
     TestFunc test_functions[] = {
-        {STR8_LIT("read"), read_via_read},
+        {STR8_LIT("fread"), read_via_fread},
+        {STR8_LIT("read"),  read_via_read},
     };
 
     u64 file_size = os_file_size(file_name);
 
-    Arena *arena = arena_alloc(KIBIBYTE(1) + file_size);
+    Arena *arena = arena_alloc(MEBIBYTE(1) + file_size);
     if (!arena) return 1;
 
     u8 *buffer = arena_push(arena, file_size);
@@ -286,17 +323,14 @@ int main(int argc, char **argv)
     u32 seconds_to_try = 10;
     u64 cpu_timer_freq = estimate_cpu_freq();
 
-    Temp temp = temp_begin(arena);
     while (1)
     {
-        temp_end(temp);
-
         u32 i = 0;
         u32 end = ArrayCount(test_functions);
         while (i < end)
         {
             TestFunc test_func = test_functions[i];
-            str8fmt_write(STDOUT_FILENO, arena, STR8_LIT("New Test Wave: %s\n"), test_func.name);
+            str8fmt_write(STDOUT_FILENO, arena, STR8_LIT("\n---New Test Wave: %s---\n"), test_func.name);
             new_test_wave(arena, &tester, params.filedata.size, cpu_timer_freq, seconds_to_try);
             test_func.func(arena, &tester, &params);
 

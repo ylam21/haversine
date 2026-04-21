@@ -1,15 +1,19 @@
 NAME_GEN    := generate_json
 NAME_HAVER  := haversine
+NAME_REPTEST:= reptest
 CC          := gcc
 
 SRC_GEN     := src/generator/generator_main.c
 SRC_HAVER   := src/main_haversine.c
+SRC_REPTEST := src/reptest/reptest_main.c
 
 CFLAGS      := -Wall -Wextra -MMD -MP
 DBG_FLAGS   := -O0 -g -fsanitize=address -DDEBUG
 DFLAGS_PROF := -DENABLE_PROFILER
 
-all: $(NAME_GEN) $(NAME_HAVER)
+all: $(NAME_GEN) $(NAME_HAVER) $(NAME_REPTEST)
+
+reptest: $(NAME_REPTEST)
 
 debug: $(NAME_GEN)_debug $(NAME_HAVER)_debug
 
@@ -35,8 +39,13 @@ $(NAME_HAVER)_debug: $(SRC_HAVER)
 $(NAME_HAVER)_prof: $(SRC_HAVER)
 	$(CC) $(CFLAGS) $(DFLAGS_PROF)=1 $< -o $@ -lm
 
+# Repetition Tester Binary
+$(NAME_REPTEST): $(SRC_REPTEST)
+	$(CC) $(CFLAGS) $< -o $@ -lm
+
 -include $(NAME_GEN).d
 -include $(NAME_HAVER).d
+-include $(NAME_REPTEST).d
 -include $(NAME_GEN)_debug.d
 -include $(NAME_HAVER)_debug.d
 -include $(NAME_GEN)_prof.d
@@ -45,6 +54,7 @@ $(NAME_HAVER)_prof: $(SRC_HAVER)
 clean:
 	rm -rf $(NAME_GEN) $(NAME_GEN)_debug $(NAME_GEN)_prof
 	rm -rf $(NAME_HAVER) $(NAME_HAVER)_debug $(NAME_HAVER)_prof
+	rm -rf $(NAME_REPTEST)
 	rm -rf *.d
 
 cleanf:
