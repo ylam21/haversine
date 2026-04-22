@@ -33,8 +33,8 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	u64 buffer_size = GIBIBYTE(2);
-	u8 *buffer = (u8 *)malloc(buffer_size);
+    u64 filesize = os_file_size(argv[1]);
+	u8 *buffer = (u8 *)malloc(filesize);
 	if (buffer == NULL)
 	{
 		perror("malloc");
@@ -44,11 +44,10 @@ int main(int argc, char **argv)
     PROFILER_BLOCK_END(startup);
 
 
-    u64 filesize = os_file_size(argv[1]);
     PROFILER_BLOCK_TPUT_BEGIN(read, filesize);
     (void)filesize;
 
-	s32 read_bytes = read(fd, buffer, buffer_size);
+	s32 read_bytes = read(fd, buffer, filesize);
 	if (read_bytes == -1)
 	{
 		fprintf(stderr, "Error: cannot read %s\n", argv[1]);

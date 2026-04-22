@@ -14,3 +14,5 @@ haversine
 haversine_debug
 haversine_prof
 reptest
+reptest_prof
+reptest_debug

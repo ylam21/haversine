@@ -17,7 +17,7 @@ reptest: $(NAME_REPTEST)
 
 debug: $(NAME_GEN)_debug $(NAME_HAVER)_debug
 
-prof: $(NAME_GEN)_prof $(NAME_HAVER)_prof
+prof: $(NAME_GEN)_prof $(NAME_HAVER)_prof $(NAME_REPTEST)_prof
 
 # Generator_json binary
 $(NAME_GEN): $(SRC_GEN) # Profiler OFF
@@ -43,6 +43,9 @@ $(NAME_HAVER)_prof: $(SRC_HAVER)
 $(NAME_REPTEST): $(SRC_REPTEST)
 	$(CC) $(CFLAGS) $< -o $@ -lm
 
+$(NAME_REPTEST)_prof: $(SRC_REPTEST)
+	$(CC) $(CFLAGS) $(DFLAGS_PROF)=1 $< -o $@ -lm
+
 -include $(NAME_GEN).d
 -include $(NAME_HAVER).d
 -include $(NAME_REPTEST).d
@@ -50,11 +53,12 @@ $(NAME_REPTEST): $(SRC_REPTEST)
 -include $(NAME_HAVER)_debug.d
 -include $(NAME_GEN)_prof.d
 -include $(NAME_HAVER)_prof.d
+-include $(NAME_REPTEST)_prof.d
 
 clean:
 	rm -rf $(NAME_GEN) $(NAME_GEN)_debug $(NAME_GEN)_prof
 	rm -rf $(NAME_HAVER) $(NAME_HAVER)_debug $(NAME_HAVER)_prof
-	rm -rf $(NAME_REPTEST)
+	rm -rf $(NAME_REPTEST) $(NAME_REPTEST)_prof
 	rm -rf *.d
 
 cleanf:
