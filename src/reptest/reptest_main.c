@@ -92,6 +92,7 @@ void end_time(RepetitionTester *tester);
 
 void read_via_read(Arena *arena, RepetitionTester *tester, ReadParams *params, AllocKind kind);
 void read_via_fread(Arena *arena, RepetitionTester *tester, ReadParams *params, AllocKind kind);
+void write_to_all_bytes(Arena *arena, RepetitionTester *tester, ReadParams *params, AllocKind kind);
 
 void print_single_result(Arena *arena, String8 label, f64 cpu_time, u64 cpu_timer_freq, u64 byte_count, u64 page_fault_count);
 void print_results(Arena *arena, RepetitionTestResults results, u64 cpu_timer_freq, u64 byte_count);
@@ -182,6 +183,54 @@ void handle_release(AllocKind kind, ReadParams *params, u8 *buffer)
             munmap(buffer, params->filedata.size);
         default:
             return;
+    }
+}
+
+void write_to_all_bytes(Arena *arena, RepetitionTester *tester, ReadParams *params, AllocKind kind)
+{
+    while (is_testing(arena, tester))
+    {
+        u8 *backing_buffer = handle_allocation(kind, params);
+        if (!backing_buffer)
+        {
+            error(arena, tester, STR8_LIT("fread failed alloc"));
+            break;
+        }
+
+        struct perf_event_attr pe;
+        memset(&pe, 0, sizeof(pe));
+        pe.type = PERF_TYPE_SOFTWARE;
+        pe.config = PERF_COUNT_SW_PAGE_FAULTS;
+        pe.disabled = 1;
+        pe.exclude_kernel = 0;
+        s32 pffd = perf_event_open(&pe, 0, -1, -1, 0);
+        if (pffd == -1)
+        {
+            perror("perf_event_open");
+            error(arena, tester, STR8_LIT("read failed perf_event_open"));
+            break;
+        }
+        ioctl(pffd, PERF_EVENT_IOC_RESET, 0);
+        ioctl(pffd, PERF_EVENT_IOC_ENABLE, 0);
+
+        begin_time(tester);
+        u64 i = 0;
+        while (i < params->filedata.size)
+        {
+            backing_buffer[i] = 1;
+            i += 1;
+        }
+        end_time(tester);
+
+        ioctl(pffd, PERF_EVENT_IOC_DISABLE, 0);
+        u64 page_faults_count = 0;
+        read(pffd, &page_faults_count, sizeof(page_faults_count));
+        close(pffd);
+
+        handle_release(kind, params, backing_buffer);
+
+        tester->bytes_accumulated_this_test += params->filedata.size;
+        tester->page_fault_count_this_test += page_faults_count;
     }
 }
 
@@ -429,6 +478,7 @@ int main(int argc, char **argv)
     char *file_name = argv[1];
 
     TestFunc test_functions[] = {
+        {STR8_LIT("write"), write_to_all_bytes},
         {STR8_LIT("read"),  read_via_read},
         {STR8_LIT("fread"), read_via_fread},
     };
