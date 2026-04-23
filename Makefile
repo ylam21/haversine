@@ -5,7 +5,7 @@ CC          := gcc
 
 SRC_GEN     := src/generator/generator_main.c
 SRC_HAVER   := src/main_haversine.c
-SRC_REPTEST := src/reptest/reptest_main.c
+SRC_REPTEST := src/reptester/reptest_main.c
 
 CFLAGS      := -Wall -Wextra -MMD -MP
 DBG_FLAGS   := -O0 -g -fsanitize=address -DDEBUG
